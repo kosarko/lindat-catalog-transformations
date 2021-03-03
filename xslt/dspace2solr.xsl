@@ -131,11 +131,6 @@
     <xsl:template name="all_as_cdata">
 	    <field name="original_metadata_ss">
 		    <xsl:value-of select="//dcvalue[@element='original_metadata']"/>
-    			<!--
-		    <xsl:text disable-output-escaping="yes">&lt;![CDATA[</xsl:text>
-		    <xsl:copy-of select="/"/>
-		    <xsl:text disable-output-escaping="yes">]]&gt;</xsl:text>
-			-->
 	    </field>
     </xsl:template>
 
