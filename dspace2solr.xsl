@@ -1,0 +1,215 @@
+<xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
+	xmlns:str="http://exslt.org/strings"
+	extension-element-prefixes="str"
+>
+    <xsl:output method="xml" version="1.0" encoding="UTF-8" indent="yes"/>
+
+    <xsl:param name="provider_name"/>
+    <xsl:param name="record_identifier"/>
+
+    <xsl:param name="iso_xml_path" select="'/home/kosarko/'"/>
+
+    <xsl:key name="iso-id-lookup" match="//language" use="id"/>
+    <xsl:key name="iso-2b-lookup" match="//language" use="Part2B"/>
+    <xsl:key name="iso-2t-lookup" match="//language" use="Part2T"/>
+    <xsl:key name="iso-1-lookup" match="//language" use="Part1"/>
+
+    <xsl:variable name="lang-top" select="document(concat($iso_xml_path, 'iso-639-3.xml'))/languages"/>
+
+    <xsl:variable name="pid" select="//dcvalue[@element='pid']"/>
+
+    <xsl:template match="text()"/>
+
+    <xsl:template match="/">
+	    <add>
+	    	<doc>
+	   		<xsl:apply-templates select="//dcvalue[not(@qualifier)]"/>
+	   		<xsl:apply-templates select="//dcvalue[@element='language'][@qualifier='iso']"/>
+			<xsl:call-template name="id"/>
+			<xsl:call-template name="displayName"/>
+			<xsl:call-template name="rights"/>
+			<xsl:call-template name="landingPage"/>
+			<xsl:call-template name="harvestedFrom"/>
+			<xsl:call-template name="all_as_cdata"/>
+		</doc>
+	    </add>
+    </xsl:template>
+
+    <xsl:template match="dcvalue[@element='title']">
+	<field name="title_tsim"><xsl:value-of select="."/></field>
+    </xsl:template>
+
+    <xsl:template match="dcvalue[@element='publisher']">
+	<field name="publisher_tsim"><xsl:value-of select="."/></field>
+	<field name="publisher_ssim"><xsl:value-of select="."/></field>
+    </xsl:template>
+
+    <xsl:template match="dcvalue[@element='creator']">
+	<field name="creator_tsim"><xsl:value-of select="."/></field>
+	<field name="creator_ssim"><xsl:value-of select="."/></field>
+    </xsl:template>
+
+    <xsl:template match="dcvalue[@element='contributor']">
+	<field name="contributor_tsim"><xsl:value-of select="."/></field>
+	<field name="contributor_ssim"><xsl:value-of select="."/></field>
+    </xsl:template>
+
+    <xsl:template match="dcvalue[@element='identifier']">
+	<field name="identifier_ssim"><xsl:value-of select="."/></field>
+    </xsl:template>
+
+    <xsl:template match="dcvalue[@element='subject']">
+	<field name="subject_ssim"><xsl:value-of select="."/></field>
+    </xsl:template>
+
+    <xsl:template match="dcvalue[@element='type']">
+	<field name="type_ssim"><xsl:value-of select="."/></field>
+    </xsl:template>
+
+    <xsl:template match="dcvalue[@element='description']">
+	    <!-- XXX apparently multivalued -->
+	<field name="description_tsim"><xsl:value-of select="."/></field>
+    </xsl:template>
+
+    <xsl:template match="dcvalue[@element='language'][@qualifier='iso']">
+	    <!-- XXX shouldn't need to tokenize -->
+	    <!--<xsl:for-each select="str:tokenize(string(.), ',')">-->
+	    <xsl:for-each select="tokenize(string(.), ',')">
+		<field name="language_iso_ssim"><xsl:value-of select="."/></field>
+		<field name="language_ssim"><xsl:apply-templates select="$lang-top"><xsl:with-param name="curr-id" select="."/></xsl:apply-templates></field>
+	    </xsl:for-each>
+    </xsl:template>
+
+    <xsl:template match="dcvalue[@element='format']">
+	<field name="format"><xsl:value-of select="."/></field>
+    </xsl:template>
+
+    <!-- XXX string?? -->
+    <xsl:template match="dcvalue[@element='coverage']">
+	<field name="coverage_ssim"><xsl:value-of select="."/></field>
+    </xsl:template>
+
+    <xsl:template match="dcvalue[@element='relation']">
+	<field name="relation_ssm"><xsl:value-of select="."/></field>
+    </xsl:template>
+
+    <xsl:template match="dcvalue[@element='source']">
+	<field name="source_ssm"><xsl:value-of select="."/></field>
+    </xsl:template>
+    <!-- 
+	 TODO maybe daterange? test with autodetect?
+    <xsl:template match="dcvalue[@element='date']">
+	<field name="date_dtsim"><xsl:value-of select="."/></field>
+    </xsl:template>
+    -->
+    <xsl:template match="dcvalue[@element='date']">
+	<field name="date_itsim"><xsl:value-of select="."/></field>
+    </xsl:template>
+
+    <xsl:template match="dcvalue[@element='metadataOnly']">
+	    <field name="metadataOnly"><xsl:value-of select="."/></field>
+    </xsl:template>
+
+    <!-- TODO 639-5 collective etc? -->
+    <xsl:template match="languages">
+        <xsl:param name="curr-id"/>
+	<xsl:choose>
+		<xsl:when test="key('iso-id-lookup', $curr-id)/Ref_Name">
+			<xsl:value-of select="key('iso-id-lookup', $curr-id)/Ref_Name"/>
+		</xsl:when>
+		<xsl:when test="key('iso-2b-lookup', $curr-id)/Ref_Name">
+			<xsl:value-of select="key('iso-2b-lookup', $curr-id)/Ref_Name"/>
+		</xsl:when>
+		<xsl:when test="key('iso-2t-lookup', $curr-id)/Ref_Name">
+			<xsl:value-of select="key('iso-2t-lookup', $curr-id)/Ref_Name"/>
+		</xsl:when>
+		<xsl:when test="key('iso-1-lookup', $curr-id)/Ref_Name">
+			<xsl:value-of select="key('iso-1-lookup', $curr-id)/Ref_Name"/>
+		</xsl:when>
+		<xsl:otherwise>
+			<xsl:message>WARN: Failed to conver lang code '<xsl:value-of select="$curr-id"/>' in '<xsl:value-of select="$pid"/>'</xsl:message>
+		</xsl:otherwise>
+		<!--
+		     TODO more complex logic?
+		-->
+	</xsl:choose>
+    </xsl:template>
+
+    <xsl:template name="id">
+	<xsl:choose>
+		<xsl:when test="//dcvalue[@element='pid']">
+			<field name="id"><xsl:value-of select="//dcvalue[@element='pid']"/></field>
+		</xsl:when>
+		<xsl:when test="//dcvalue[@element='identifier' and starts-with(text(),'uuid')]">
+			<field name="id"><xsl:value-of select="//dcvalue[@element='identifier' and starts-with(text(),'uuid')]"/></field>
+		</xsl:when>
+		<xsl:otherwise>
+			<field name="id"><xsl:value-of select="//dcvalue[@element='identifier'][1]"/></field>
+		</xsl:otherwise>
+	</xsl:choose>
+    </xsl:template>
+
+    <xsl:template name="displayName">
+	<xsl:choose>
+		<xsl:when test="//dcvalue[@element='title']">
+			<field name="displayName"><xsl:value-of select="//dcvalue[@element='title']"/></field>
+		</xsl:when>
+		<xsl:when test="//dcvalue[@element='description']">
+			<field name="displayName"><xsl:value-of select="//dcvalue[@element='description']"/></field>
+		</xsl:when>
+	</xsl:choose>
+    </xsl:template>
+
+    <xsl:template name="all_as_cdata">
+	    <field name="original_metadata_ss">
+		    <xsl:value-of select="//dcvalue[@element='original_metadata']"/>
+    			<!--
+		    <xsl:text disable-output-escaping="yes">&lt;![CDATA[</xsl:text>
+		    <xsl:copy-of select="/"/>
+		    <xsl:text disable-output-escaping="yes">]]&gt;</xsl:text>
+			-->
+	    </field>
+    </xsl:template>
+
+    <xsl:template name="rights">
+	    <!-- TODO limit the values to some manageable set -->
+	    <xsl:for-each select="//dcvalue[@element='rights']">
+		    <!-- XXX maybe should be text? not a string -->
+		    <field name="rights"><xsl:value-of select="."/></field>
+	    </xsl:for-each>
+    </xsl:template>
+
+    <xsl:template name="landingPage">
+	    <!-- TODO probably more complex logic
+		      not indexed it should be url
+		 -->
+	    <field name="landingPage"><xsl:value-of select="//dcvalue[@element='landingPage']"/></field>
+    </xsl:template>
+    <xsl:template name="harvestedFrom">
+	    <field name="harvestedFrom"><xsl:value-of select="$provider_name"/></field>
+    </xsl:template>
+    <!--
+
+
+	  //review for facet/filter/view/results
+          element="coverage"
+          element="format"
+          element="relation"
+          element="source"
+  	  element="date"
+      	  element="rights"
+	  rights.uri
+	  element="contributor"
+ 	  element="creator"
+  	  element="identifier"
+	  element="title"
+    	  element="publisher"
+          element="subject"
+ 	element="description"
+	  element="type"
+	  language.iso
+	 -->
+
+
+
+</xsl:stylesheet>
