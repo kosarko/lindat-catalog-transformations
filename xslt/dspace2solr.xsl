@@ -66,8 +66,8 @@
 
     <xsl:template match="dcvalue[@element='language'][@qualifier='iso']">
 	    <!-- XXX shouldn't need to tokenize -->
-	    <!--<xsl:for-each select="str:tokenize(string(.), ',')">-->
-	    <xsl:for-each select="tokenize(string(.), ',')">
+	    <!----><xsl:for-each select="str:tokenize(string(.), ',')">
+	    <!--<xsl:for-each select="tokenize(string(.), ',')">-->
 		<field name="language_iso_ssim"><xsl:value-of select="."/></field>
 		<field name="language_ssim"><xsl:apply-templates select="$lang-top"><xsl:with-param name="curr-id" select="."/></xsl:apply-templates></field>
 	    </xsl:for-each>
@@ -156,28 +156,4 @@
     <xsl:template name="harvestedFrom">
 	    <field name="harvestedFrom"><xsl:value-of select="$provider_name"/></field>
     </xsl:template>
-    <!--
-
-
-	  //review for facet/filter/view/results
-          element="coverage"
-          element="format"
-          element="relation"
-          element="source"
-  	  element="date"
-      	  element="rights"
-	  rights.uri
-	  element="contributor"
- 	  element="creator"
-  	  element="identifier"
-	  element="title"
-    	  element="publisher"
-          element="subject"
- 	element="description"
-	  element="type"
-	  language.iso
-	 -->
-
-
-
 </xsl:stylesheet>
