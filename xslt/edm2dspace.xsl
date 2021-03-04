@@ -13,6 +13,8 @@
 
     <xsl:key name="about" match="//*[@rdf:about]" use="@rdf:about"/>
 
+    <xsl:include href="common/common.xslt"/>
+
     <xsl:template match="text()"/>
 
     <xsl:template match="/rdf:RDF">
@@ -115,13 +117,4 @@
 		    </xsl:otherwise>
 	    </xsl:choose>
     </xsl:template>
-
-    <xsl:template name="all_as_cdata">
-	    <dcvalue element="original_metadata">
-		    <xsl:text disable-output-escaping="yes">&lt;![CDATA[</xsl:text>
-		    <xsl:copy-of select="/"/>
-		    <xsl:text disable-output-escaping="yes">]]&gt;</xsl:text>
-	    </dcvalue>
-    </xsl:template>
-
 </xsl:stylesheet>

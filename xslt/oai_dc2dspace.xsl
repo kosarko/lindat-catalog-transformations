@@ -8,11 +8,14 @@
     <xsl:param name="provider_name"/>
     <xsl:param name="record_identifier"/>
 
+    <xsl:include href="common/common.xslt"/>
+
     <xsl:template match="text()"/>
 
     <xsl:template match="/oai_dc:dc">
         <dublin_core schema="dc">
             <xsl:apply-templates select="dc:*"/>
+	    <xsl:call-template name="all_as_cdata"/>
         </dublin_core>
     </xsl:template>
 
