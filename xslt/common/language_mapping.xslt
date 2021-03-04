@@ -9,7 +9,7 @@
     <xsl:key name="iso-2t-lookup" match="//language" use="Part2T"/>
     <xsl:key name="iso-1-lookup" match="//language" use="Part1"/>
 
-    <xsl:variable name="lang-top" select="document(concat($iso_xml_path, 'iso-639-3.xml'))/languages" as="document-node()"/>
+    <xsl:variable name="lang-top" select="document(concat($iso_xml_path, 'iso-639-3.xml'))/languages"/>
 
     <!-- TODO 639-5 collective etc? -->
     <xsl:template match="languages">
