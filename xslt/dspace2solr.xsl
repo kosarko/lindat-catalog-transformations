@@ -22,6 +22,7 @@
 			<xsl:call-template name="displayName"/>
 			<xsl:call-template name="rights"/>
 			<xsl:call-template name="landingPage"/>
+			<xsl:call-template name="oai_identifier"/>
 			<xsl:call-template name="harvestedFrom"/>
 			<xsl:call-template name="all_as_cdata"/>
 		</doc>
@@ -150,5 +151,8 @@
     </xsl:template>
     <xsl:template name="harvestedFrom">
 	    <field name="harvestedFrom"><xsl:value-of select="$provider_name"/></field>
+    </xsl:template>
+    <xsl:template name="oai_identifier">
+	    <field name="oai_id"><xsl:value-of select="$record_identifier"/></field>
     </xsl:template>
 </xsl:stylesheet>
