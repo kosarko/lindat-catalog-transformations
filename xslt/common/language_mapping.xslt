@@ -14,21 +14,22 @@
     <!-- TODO 639-5 collective etc? -->
     <xsl:template match="languages">
         <xsl:param name="curr-id"/>
+	<xsl:variable name="curr-id-norm" select="normalize-space($curr-id)"/>
 	<xsl:choose>
-		<xsl:when test="key('iso-id-lookup', $curr-id)/Ref_Name">
-			<xsl:value-of select="key('iso-id-lookup', $curr-id)/Ref_Name"/>
+		<xsl:when test="key('iso-id-lookup', $curr-id-norm)/Ref_Name">
+			<xsl:copy-of select="key('iso-id-lookup', $curr-id-norm)"/>
 		</xsl:when>
-		<xsl:when test="key('iso-2b-lookup', $curr-id)/Ref_Name">
-			<xsl:value-of select="key('iso-2b-lookup', $curr-id)/Ref_Name"/>
+		<xsl:when test="key('iso-2b-lookup', $curr-id-norm)/Ref_Name">
+			<xsl:copy-of select="key('iso-2b-lookup', $curr-id-norm)"/>
 		</xsl:when>
-		<xsl:when test="key('iso-2t-lookup', $curr-id)/Ref_Name">
-			<xsl:value-of select="key('iso-2t-lookup', $curr-id)/Ref_Name"/>
+		<xsl:when test="key('iso-2t-lookup', $curr-id-norm)/Ref_Name">
+			<xsl:copy-of select="key('iso-2t-lookup', $curr-id-norm)"/>
 		</xsl:when>
-		<xsl:when test="key('iso-1-lookup', $curr-id)/Ref_Name">
-			<xsl:value-of select="key('iso-1-lookup', $curr-id)/Ref_Name"/>
+		<xsl:when test="key('iso-1-lookup', $curr-id-norm)/Ref_Name">
+			<xsl:copy-of select="key('iso-1-lookup', $curr-id-norm)"/>
 		</xsl:when>
 		<xsl:otherwise>
-			<xsl:message>WARN: Failed to conver lang code '<xsl:value-of select="$curr-id"/>' in '<xsl:value-of select="$pid"/>'</xsl:message>
+			<xsl:message>WARN: Failed to convert lang code '<xsl:value-of select="$curr-id-norm"/>' in '<xsl:value-of select="$pid"/>'</xsl:message>
 		</xsl:otherwise>
 		<!--
 		     TODO more complex logic?
