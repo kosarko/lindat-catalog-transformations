@@ -13,12 +13,13 @@
 	<xsl:if test="not(//dc:rights)">
 		<dcvalue element="rights"><xsl:value-of select="'Not specified'"/></dcvalue>
 	</xsl:if>
+    <xsl:if test="//dc:identifier[contains(text(), 'files')]">
+	    <dcvalue element="metadataOnly">false</dcvalue>
+    </xsl:if>
     </xsl:template>
 
     <xsl:template match="dc:identifier[contains(text(), 'files')]">
         <dcvalue element="identifier"><xsl:value-of select="."/></dcvalue>
-	<!-- can the true be implied? -->
-	<dcvalue element="metadataOnly">false</dcvalue>
     </xsl:template>
 
 </xsl:stylesheet>
