@@ -17,6 +17,7 @@
 	    <add>
 	    	<doc>
 	   		<xsl:apply-templates select="//dcvalue[not(@qualifier)]"/>
+            <!-- the above applies also unqualified languages -->
 	   		<xsl:apply-templates select="//dcvalue[@element='language'][@qualifier='iso']"/>
 			<xsl:call-template name="id"/>
 			<xsl:call-template name="displayName"/>
