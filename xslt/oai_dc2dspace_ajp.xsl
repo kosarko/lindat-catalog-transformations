@@ -13,6 +13,7 @@
 	<xsl:if test="not(//dc:rights)">
 		<dcvalue element="rights"><xsl:value-of select="'Not specified'"/></dcvalue>
 	</xsl:if>
+	<!-- what if there is no files link? -->
     <xsl:if test="//dc:identifier[contains(text(), 'files')]">
 	    <dcvalue element="metadataOnly">false</dcvalue>
     </xsl:if>
