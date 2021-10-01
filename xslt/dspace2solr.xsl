@@ -118,6 +118,7 @@
     -->
     <xsl:template match="dcvalue[@element='date']">
 	<field name="date_itsim"><xsl:value-of select="."/></field>
+	<field name="date_ssm"><xsl:value-of select="."/></field>
     </xsl:template>
 
     <xsl:template match="dcvalue[@element='metadataOnly']">
