@@ -23,6 +23,7 @@
                 <dcvalue element="rights">open access</dcvalue>
                 <dcvalue element="rights">Rights holder: Archiv Jana Patočky, z.s.</dcvalue>
                 <xsl:apply-templates/>
+                <xsl:call-template name="metadata_only"/>
                 <xsl:call-template name="all_as_cdata"/>
         </dublin_core>
 
@@ -53,7 +54,10 @@
 
     <xsl:template match="//omeka:tagContainer/omeka:tag/omeka:name">
                 <dcvalue element="subject"><xsl:value-of select="normalize-space(.)"/></dcvalue>
-                <xsl:if test="'fulltext'=lower-case(text())">
+    </xsl:template>
+
+    <xsl:template name="metadata_only">
+                <xsl:if test="/omeka:item/omeka:fileContainer/omeka:file or //omeka:tagContainer/omeka:tag/omeka:name[lower-case(normalize-space(text()))='fulltext']">
                     <dcvalue element="metadataOnly">false</dcvalue>
                 </xsl:if>
     </xsl:template>
