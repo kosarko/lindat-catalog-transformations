@@ -10,6 +10,9 @@
        <dcvalue element="pid"><xsl:value-of select="."/></dcvalue>
         <!-- bit of a hack adding these here -->
         <xsl:apply-templates select="//dim:field[@mdschema!='dc']"/>
+        <xsl:if test="not(//dim:field[@mdschema='dc' and @element='rights'])">
+           <dcvalue element="rights"><xsl:value-of select="'Not specified'"/></dcvalue>
+        </xsl:if>
     </xsl:template>
 
     <xsl:template match="dim:field[@mdschema='dc' and @element='date' and @qualifier='issued']" priority="100">
