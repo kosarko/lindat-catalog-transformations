@@ -19,6 +19,7 @@
 	   		<xsl:apply-templates select="//dcvalue[not(@qualifier)]"/>
             <!-- the above applies also unqualified languages -->
 	   		<xsl:apply-templates select="//dcvalue[@element='language'][@qualifier='iso']"/>
+			<xsl:apply-templates select="//dcvalue[@element='contributor'][@qualifier='funder']"/>
 			<xsl:call-template name="id"/>
 			<xsl:call-template name="displayName"/>
 			<xsl:call-template name="rights"/>
@@ -124,6 +125,23 @@
     <xsl:template match="dcvalue[@element='metadataOnly']">
 	    <field name="metadataOnly"><xsl:value-of select="."/></field>
     </xsl:template>
+
+	<!--
+	 this is a bit hacky as it expect the lindat format in the value
+			org=1
+			id=2
+			name=3
+	 -->
+<!--	<xsl:template match="dcvalue[@element='contributor' and @qualifier='funder']" priority="100">-->
+<!--		<xsl:variable name="proj_arr" select="tokenize(., '@@')"/>-->
+<!--		<xsl:if-->
+<!--				test="$proj_arr[1] != '' and $proj_arr[2] != '' and $proj_arr[3] != ''">-->
+<!--            <field name="funding_org_tsim"><xsl:value-of select="$proj_arr[1]"/></field>-->
+<!--			<field name="funding_id_name_tsim"><xsl:value-of select="concat($proj_arr[2], ': ', $proj_arr[3])"/></field>-->
+<!--			<field name="funding_org_ssim"><xsl:value-of select="$proj_arr[1]"/></field>-->
+<!--			<field name="funding_id_name_ssim"><xsl:value-of select="concat($proj_arr[2], ': ', $proj_arr[3])"/></field>-->
+<!--		</xsl:if>-->
+<!--	</xsl:template>-->
 
     <xsl:template name="id">
 	<xsl:choose>
