@@ -14,7 +14,7 @@
     <xsl:template match="/dim:dim">
         <dublin_core schema="dc">
             <xsl:apply-templates select="dim:field[@mdschema='dc']"/>
-<!--            <xsl:call-template name="all_as_cdata"/>-->
+            <xsl:call-template name="all_as_cdata"/>
         </dublin_core>
     </xsl:template>
 
