@@ -15,3 +15,5 @@ EOF
 
 terms
 curl -s "https://iso639-3.sil.org/sites/iso639-3/files/downloads/iso-639-3.tab" | tail -n +2 | awk -F'\t' -vRS='\r?\n' 'BEGIN{print "<languages>"} END{print "</languages>"} {print "<language><id>" $1 "</id><Part2B>" $2 "</Part2B><Part2T>" $3 "</Part2T><Part1>" $4 "</Part1><Ref_Name>" $7 "</Ref_Name></language>"}' | xmllint --format - > iso-639-3.xml
+
+mvn dependency:get -Dartifact=net.sf.saxon:Saxon-HE:LATEST -Ddest=.

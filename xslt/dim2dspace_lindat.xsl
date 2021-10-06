@@ -40,7 +40,7 @@
     </xsl:template>
 
     <!-- outdated metadata; don't put fundingType under type -->
-    <xsl:template match="dim[@element='ResourceInfo#ResourceCreationInfo#FundingInfo#ProjectInfo']"
+    <xsl:template match="dim:field[@element='ResourceInfo#ResourceCreationInfo#FundingInfo#ProjectInfo']"
                   priority="100"/>
     <xsl:template
             match="dim:field[@mdschema!='dc' and contains(lower-case(@qualifier), 'type')]|dim:field[@mdschema!='dc' and @element='type']">
