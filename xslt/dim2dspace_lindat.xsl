@@ -5,7 +5,7 @@
     <xsl:output method="xml" version="1.0" encoding="UTF-8" indent="yes"/>
 
     <xsl:template match="dim:field[@mdschema='dc' and @element='identifier' and @qualifier='uri']">
-        <dcvalue element="identifier" qualifier="uri"><xsl:value-of select="."/></dcvalue>
+        <dcvalue element="identifier"><xsl:value-of select="."/></dcvalue>
         <dcvalue element="landingPage"><xsl:value-of select="."/></dcvalue>
        <dcvalue element="pid"><xsl:value-of select="."/></dcvalue>
         <!-- bit of a hack adding these here -->
