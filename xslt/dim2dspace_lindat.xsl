@@ -39,7 +39,11 @@
         <dcvalue element="contributor" qualifier="funder"><xsl:value-of select="."/></dcvalue>
     </xsl:template>
 
-    <xsl:template match="dim:field[@mdschema!='dc' and contains(lower-case(@qualifier), 'type')]">
+    <!-- outdated metadata; don't put fundingType under type -->
+    <xsl:template match="dim[@element='ResourceInfo#ResourceCreationInfo#FundingInfo#ProjectInfo']"
+                  priority="100"/>
+    <xsl:template
+            match="dim:field[@mdschema!='dc' and contains(lower-case(@qualifier), 'type')]|dim:field[@mdschema!='dc' and @element='type']">
         <dcvalue element="type"><xsl:value-of select="."/></dcvalue>
     </xsl:template>
 
