@@ -26,6 +26,7 @@
 			<xsl:call-template name="landingPage"/>
 			<xsl:call-template name="oai_identifier"/>
 			<xsl:call-template name="harvestedFrom"/>
+			<xsl:call-template name="dataProvider"/>
 			<xsl:call-template name="all_as_cdata"/>
 		</doc>
 	    </add>
@@ -188,6 +189,12 @@
 		 -->
 	    <field name="landingPage"><xsl:value-of select="//dcvalue[@element='landingPage']"/></field>
     </xsl:template>
+
+		<xsl:template name="dataProvider">
+	    <field name="dataProvider_ssi"><xsl:value-of select="//dcvalue[@element='dataProvider']"/></field>
+	    <field name="dataProvider_tsi"><xsl:value-of select="//dcvalue[@element='dataProvider']"/></field>
+		</xsl:template>
+
     <xsl:template name="harvestedFrom">
 	    <field name="harvestedFrom"><xsl:value-of select="$provider_name"/></field>
     </xsl:template>
