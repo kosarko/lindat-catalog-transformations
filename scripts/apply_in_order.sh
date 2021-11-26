@@ -72,7 +72,7 @@ function process_result {
   for xsl in $TRANSFORMATIONS; do
     local xslt
     local pipe_part
-    xslt=$(find "$XSLT_DIR" -type f -name "${xsl}*" | head -n 1)
+    xslt=$(find "$XSLT_DIR" -type f -name "${xsl}*" | LC_ALL=C sort | head -n 1)
     if [ "$(basename "$xslt")" = "extract_raw_single.xsl" ]; then
       params[record_identifier]=$(xmllint --xpath '//*[local-name()="record"]/*[local-name()="header"]/*[local-name()="identifier"]/text()' "$line")
     fi
