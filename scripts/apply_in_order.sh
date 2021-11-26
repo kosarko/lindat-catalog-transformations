@@ -79,6 +79,9 @@ function process_result {
     fi
     if [ "$(basename "$xslt")" = "extract_raw_single.xsl" ]; then
       params[record_identifier]=$(xmllint --xpath '//*[local-name()="record"]/*[local-name()="header"]/*[local-name()="identifier"]/text()' "$line")
+    else
+      echo "warn: using fake record_identifier"
+      params[record_identifier]="FAKE_ID_$id"
     fi
     # this is using $xslt $input and $params
     pipe_part=$(build_pipe_part)
