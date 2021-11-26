@@ -73,6 +73,10 @@ function process_result {
     local xslt
     local pipe_part
     xslt=$(find "$XSLT_DIR" -type f -name "${xsl}*" | LC_ALL=C sort | head -n 1)
+    if [ -z "$xslt" ]; then
+	    echo "warn ${xsl}\* does not exist" >&2
+	    exit 1
+    fi
     if [ "$(basename "$xslt")" = "extract_raw_single.xsl" ]; then
       params[record_identifier]=$(xmllint --xpath '//*[local-name()="record"]/*[local-name()="header"]/*[local-name()="identifier"]/text()' "$line")
     fi
