@@ -13,8 +13,10 @@
 
     <xsl:template match="dc:relation">
         <xsl:if test="./text()">
+            <xsl:if test="generate-id() = generate-id(//dc:relation[1])">
+                <dcvalue element="metadataOnly">false</dcvalue>
+            </xsl:if>
             <dcvalue element="relation"><xsl:value-of select="."/></dcvalue>
-            <dcvalue element="metadataOnly">false</dcvalue>
         </xsl:if>
     </xsl:template>
 
