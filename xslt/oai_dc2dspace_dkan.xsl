@@ -11,4 +11,11 @@
         </xsl:if>
     </xsl:template>
 
+    <xsl:template match="dc:relation">
+        <xsl:if test="./text()">
+            <dcvalue element="relation"><xsl:value-of select="."/></dcvalue>
+            <dcvalue element="metadataOnly">false</dcvalue>
+        </xsl:if>
+    </xsl:template>
+
 </xsl:stylesheet>
