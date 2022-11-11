@@ -79,7 +79,7 @@
                         <xsl:message>WARN: There are multiple WebResources, not sure if choosing the right
                         license</xsl:message>
                     </xsl:if>
-                    <xsl:value-of select="//edm:WebResource[0]/edm:rights/@rdf:resource"/>
+                    <xsl:value-of select="//edm:WebResource[1]/edm:rights/@rdf:resource"/>
                 </xsl:when>
                 <xsl:when test="//ore:Aggregation/edm:rights">
                     <xsl:value-of select="//ore:Aggregation/edm:rights/@rdf:resource"/>
