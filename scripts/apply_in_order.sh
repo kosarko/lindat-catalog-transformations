@@ -32,10 +32,6 @@ while getopts ":s:o:p:" opt; do
 done
 shift $((OPTIND -1))
 
-# If this was an array it couldn't be exported
-# shellcheck disable=SC2124
-export TRANSFORMATIONS="$@"
-
 function build_pipe_part {
   # using $xslt $input and $params ie. these must be defined when this is called
   case ${proc} in
@@ -79,6 +75,8 @@ function process_result {
     fi
     if [ "$(basename "$xslt")" = "extract_raw_single.xsl" ]; then
       params[record_identifier]=$(xmllint --xpath '//*[local-name()="record"]/*[local-name()="header"]/*[local-name()="identifier"]/text()' "$line")
+    elif [ -e "${line/%xml/txt}" ]; then
+      params[record_identifier]=$(<${line/%xml/txt})
     else
       echo "warn: using fake record_identifier"
       params[record_identifier]="FAKE_ID_$id"
@@ -99,7 +97,23 @@ mkdir -p "$OUTDIR"
 CPUS=$(nproc)
 (( CPUS++ )) || true
 
+if [[ "$1" =~ ^extract(\.xsl)?$ ]]; then
+        mkdir -p "$OUTDIR"/split
+        pushd "$OUTDIR"/split >/dev/null
+        xslt=$(find "$XSLT_DIR" -type f -name "${1}*" | LC_ALL=C sort | head -n 1)
+        find $SRC_DIR -type f -exec $SXPROC -xsl:$xslt -s:{} >/dev/null \;
+        unset xslt
+        popd >/dev/null
+        shift
+        SRC_DIR="$OUTDIR"/split
+fi
+
+# If this was an array it couldn't be exported
+# shellcheck disable=SC2124
+export TRANSFORMATIONS="$@"
+
 #find ~/sources/oai-harvest-manager/test-workspace/results/edm/CDK/ -type f |  xargs -n 1 -I filename -P 0 bash -c 'process_result filename' _ 2>&1 | grep -i warn
-find "$SRC_DIR" -type f -print0 | xargs -n 1 -I filename -P "$CPUS" --null bash -c 'process_result filename' _ 2>&1 | \
+find "$SRC_DIR" -type f -iname '*.xml' -print0 | xargs -n 1 -I filename -P "$CPUS" --null bash -c 'process_result filename' _ 2>&1 | \
  { grep -i warn || :; }
 
+rm -rf "$OUTDIR"/split
