@@ -19,5 +19,12 @@
         </xsl:if>
     </xsl:template>
 
+    <xsl:template match="dc:date">
+            <dcvalue element="date"><xsl:value-of select="."/></dcvalue>
+            <xsl:if test="generate-id() = generate-id(//dc:date[1])">
+                    <dcvalue element="daterange"><xsl:value-of select="concat(., '@@', if (//dc:date[2]) then //dc:date[2] else .)"/></dcvalue>
+            </xsl:if>
+    </xsl:template>
+
 </xsl:stylesheet>
 

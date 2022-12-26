@@ -1,5 +1,7 @@
 <xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
 	xmlns:str="http://exslt.org/strings"
+    xmlns:myfn="my:local:functions"
+    exclude-result-prefixes="myfn"
 	extension-element-prefixes="str"
 >
     <xsl:output method="xml" version="1.0" encoding="UTF-8" indent="yes"/>
@@ -8,6 +10,8 @@
     <xsl:param name="record_identifier"/>
 
     <xsl:variable name="pid" select="//dcvalue[@element='pid']"/>
+
+    <xsl:include href="common/functions.xslt"/>
 
     <xsl:include href="common/language_mapping.xslt"/>
 
@@ -121,6 +125,14 @@
     <xsl:template match="dcvalue[@element='date']">
 	<field name="date_itsim"><xsl:value-of select="."/></field>
 	<field name="date_ssm"><xsl:value-of select="."/></field>
+    </xsl:template>
+
+    <!-- XXX This is sort of ad hoc...generates date_itsim once for each year in range
+         it shouldn't conflict with the date_itsim above, as that'll be either filtered out by regexp in our solrconfig, is in range or a completely different year.
+    -->
+    <xsl:template match="dcvalue[@element='daterange']">
+            <xsl:variable name="r" select="tokenize(.,'@@')"/>
+            <xsl:copy-of select="myfn:aRange(myfn:getYear($r[1]), myfn:getYear($r[2]))"/>
     </xsl:template>
 
     <xsl:template match="dcvalue[@element='metadataOnly']">
