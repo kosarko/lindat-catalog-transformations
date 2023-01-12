@@ -16,8 +16,9 @@ if [ -x "$SXPROC" ]; then
   proc=sxproc
 fi
 
+KEEP=false
 
-while getopts ":s:o:p:" opt; do
+while getopts ":s:o:p:k" opt; do
   case ${opt} in
     s ) SRC_DIR=$(readlink -e "$OPTARG")
       ;;
@@ -26,7 +27,11 @@ while getopts ":s:o:p:" opt; do
       ;;
     p ) export PROVIDER="'$OPTARG'"
       ;;
+    k ) KEEP=true
+        export KEEP
+      ;;
     \? ) echo "Usage: cmd -s SRC_DIR -o OUT_DIR -p PROVIDER a.xsl b.xsl c.xsl"
+         exit 2;
       ;;
   esac
 done
@@ -65,6 +70,14 @@ function process_result {
   # shellcheck disable=SC2016
   local input='$line'
   declare -A params=( [provider_name]="$PROVIDER" [static_provider_name]="$PROVIDER" )
+
+  if [ -e "${line/%xml/txt}" ]; then
+    params[record_identifier]=$(<${line/%xml/txt})
+  else
+    echo "warn: using fake record_identifier"
+    params[record_identifier]="FAKE_ID_$id"
+  fi
+
   for xsl in $TRANSFORMATIONS; do
     local xslt
     local pipe_part
@@ -72,14 +85,6 @@ function process_result {
     if [ -z "$xslt" ]; then
 	    echo "warn ${xsl}\* does not exist" >&2
 	    exit 1
-    fi
-    if [ "$(basename "$xslt")" = "extract_raw_single.xsl" ]; then
-      params[record_identifier]=$(xmllint --xpath '//*[local-name()="record"]/*[local-name()="header"]/*[local-name()="identifier"]/text()' "$line")
-    elif [ -e "${line/%xml/txt}" ]; then
-      params[record_identifier]=$(<${line/%xml/txt})
-    else
-      echo "warn: using fake record_identifier"
-      params[record_identifier]="FAKE_ID_$id"
     fi
     # this is using $xslt $input and $params
     pipe_part=$(build_pipe_part)
@@ -90,7 +95,19 @@ function process_result {
   eval "$cmd"
 }
 
-export -f build_pipe_part process_result
+function extract_raw_single {
+        local line=$1
+        local bn
+        bn=$(basename "$line")
+        xmllint --push --xpath '//*[local-name()="record"]/*[local-name()="header"]/*[local-name()="identifier"]/text()' "$line" > "${bn/%xml/txt}"
+        #not a good idea, fcks up namespaces
+        #xmllint --push --xpath '//*[local-name()="metadata"]/node()' "$line" > "$bn"
+        #$SXPROC -xsl:"$XSLT_DIR/extract_raw_single.xsl" -s:"$line" > "$bn"
+        #prob faster
+        xsltproc -o "$bn" "$XSLT_DIR/extract_raw_single.xsl" "$line"
+}
+
+export -f build_pipe_part process_result extract_raw_single
 
 mkdir -p "$OUTDIR"
 
@@ -100,9 +117,17 @@ CPUS=$(nproc)
 if [[ "$1" =~ ^extract(\.xsl)?$ ]]; then
         mkdir -p "$OUTDIR"/split
         pushd "$OUTDIR"/split >/dev/null
-        xslt=$(find "$XSLT_DIR" -type f -name "${1}*" | LC_ALL=C sort | head -n 1)
+        xslt="$XSLT_DIR/extract.xsl"
         find $SRC_DIR -type f -exec $SXPROC -xsl:$xslt -s:{} >/dev/null \;
         unset xslt
+        popd >/dev/null
+        shift
+        SRC_DIR="$OUTDIR"/split
+fi
+if [[ "$1" =~ ^extract_raw_single(\.xsl)?$ ]]; then
+        mkdir -p "$OUTDIR"/split
+        pushd "$OUTDIR"/split >/dev/null
+        find $SRC_DIR -type f -print0 | xargs -n 1 -I filename -P "$CPUS" --null  bash -c 'extract_raw_single filename' _ 
         popd >/dev/null
         shift
         SRC_DIR="$OUTDIR"/split
@@ -116,4 +141,6 @@ export TRANSFORMATIONS="$@"
 find "$SRC_DIR" -type f -iname '*.xml' -print0 | xargs -n 1 -I filename -P "$CPUS" --null bash -c 'process_result filename' _ 2>&1 | \
  { grep -i warn || :; }
 
-rm -rf "$OUTDIR"/split
+if ! $KEEP; then
+    rm -rf "$OUTDIR"/split
+fi
