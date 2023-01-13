@@ -178,6 +178,9 @@
 		<xsl:when test="//dcvalue[@element='description']">
 			<field name="displayName"><xsl:value-of select="//dcvalue[@element='description']"/></field>
 		</xsl:when>
+		<xsl:otherwise>
+			<field name="displayName"><xsl:value-of select="$record_identifier"/></field>
+		</xsl:otherwise>
 	</xsl:choose>
     </xsl:template>
 
