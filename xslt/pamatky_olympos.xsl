@@ -4,6 +4,8 @@
 >
     <xsl:output method="xml" version="1.0" encoding="UTF-8" indent="yes"/>
 
+    <xsl:param name="provider_uri" required="true" />
+
 
     <xsl:include href="common/common.xslt"/>
 
@@ -83,8 +85,11 @@
     </xsl:template>
 
     <xsl:template match="m:controlfield[@tag='001']">
-            <dcvalue element="pid"><xsl:value-of select="concat('olympos_cz:', text())"/></dcvalue>
-            <dcvalue element="landingPage"><xsl:value-of select="concat('http://pamatky.olympos.cz/l.dll?cll~P=', text())"/></dcvalue>
+            <dcvalue element="identifier"><xsl:value-of select="concat('olympos_cz:', text())"/></dcvalue>
+            <dcvalue element="landingPage"><xsl:value-of select="concat( if (contains($provider_uri,  'pamatky'))
+                                                                         then 'http://pamatky.olympos.cz/l.dll?cll~P='
+                                                                         else 'http://dramata.olympos.cz/l.dll?cll~P=',
+                                                                         text())"/></dcvalue>
             <dcvalue element="rights">
                     <xsl:text>autorská práva www.olympos.cz</xsl:text>
                     <!--

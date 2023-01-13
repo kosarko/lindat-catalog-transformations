@@ -14,6 +14,6 @@
     <!-- overrides -->
     <!-- per provider includes if any -->
     <xsl:include href="pamatky_olympos.xsl"
-                 use-when="$static_provider_name='Pamatky' and doc-available('pamatky_olympos.xsl')"/>
+                 use-when="($static_provider_name='Pamatky' or $static_provider_name='Dramata') and doc-available('pamatky_olympos.xsl')"/>
 
 </xsl:stylesheet>

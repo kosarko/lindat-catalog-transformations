@@ -17,8 +17,10 @@ if [ -x "$SXPROC" ]; then
 fi
 
 KEEP=false
+#default empty string
+export PROVIDER_URI=
 
-while getopts ":s:o:p:k" opt; do
+while getopts ":s:o:p:u:k" opt; do
   case ${opt} in
     s ) SRC_DIR=$(readlink -e "$OPTARG")
       ;;
@@ -27,10 +29,12 @@ while getopts ":s:o:p:k" opt; do
       ;;
     p ) export PROVIDER="'$OPTARG'"
       ;;
+    u ) export PROVIDER_URI="'$OPTARG'"
+      ;;
     k ) KEEP=true
         export KEEP
       ;;
-    \? ) echo "Usage: cmd -s SRC_DIR -o OUT_DIR -p PROVIDER a.xsl b.xsl c.xsl"
+    \? ) echo "Usage: cmd -s SRC_DIR -o OUT_DIR -p PROVIDER -u PROVIDER_URI a.xsl b.xsl c.xsl"
          exit 2;
       ;;
   esac
@@ -70,6 +74,9 @@ function process_result {
   # shellcheck disable=SC2016
   local input='$line'
   declare -A params=( [provider_name]="$PROVIDER" [static_provider_name]="$PROVIDER" )
+  if [ -n "$PROVIDER_URI" ]; then
+          params[provider_uri]="$PROVIDER_URI"
+  fi
 
   if [ -e "${line/%xml/txt}" ]; then
     params[record_identifier]=$(<${line/%xml/txt})
