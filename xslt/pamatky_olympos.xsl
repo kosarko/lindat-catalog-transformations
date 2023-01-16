@@ -15,18 +15,23 @@
     <xsl:template match="/m:record">
         <dublin_core schema="dc">
             <xsl:apply-templates/>
-	    <xsl:call-template name="all_as_cdata"/>
+            <xsl:call-template name="title"/>
+            <xsl:call-template name="metadataOnly"/>
+            <xsl:call-template name="all_as_cdata"/>
         </dublin_core>
     </xsl:template>
 
-    <xsl:template match="m:datafield[@tag='X02']/m:subfield[@code='a']">
-            <xsl:if test="generate-id() = generate-id(//m:datafield[@tag='X02'][1]/m:subfield[@code='a'][1])">
+    <xsl:template name="metadataOnly">
+            <xsl:if test="some $subfield in /m:record/m:datafield[@tag='X02' or @tag='X00' or @tag='X03']/m:subfield satisfies $subfield/text()">
                 <dcvalue element="metadataOnly">false</dcvalue>
             </xsl:if>
     </xsl:template>
 
     <xsl:template match="m:datafield[@tag='TYP']/m:subfield[@code='a']">
             <dcvalue element="type"><xsl:value-of select="text()"/></dcvalue>
+    </xsl:template>
+    <xsl:template match="m:leader[matches(text(), '^.......a.*')]">
+            <dcvalue element="type"><xsl:value-of select="'subordinate record'"/></dcvalue>
     </xsl:template>
 
     <xsl:template match="m:datafield[@tag='NAM']/m:subfield[@code='a']">
@@ -79,9 +84,16 @@
             <dcvalue element="publisher"><xsl:value-of select="text()"/></dcvalue>
     </xsl:template>
 
-    <!-- @code='b' vypada jako anglickej preklad ale v sample je jen malo -->
-    <xsl:template match="m:datafield[@tag='245']/m:subfield[@code='a']">
-            <dcvalue element="title"><xsl:value-of select="text()"/></dcvalue>
+    <xsl:template name="title">
+            <xsl:choose>
+                    <xsl:when test="m:datafield[@tag='NZV']/m:subfield[@code='t']/text()">
+                        <dcvalue element="title"><xsl:value-of select="m:datafield[@tag='NZV']/m:subfield[@code='t']"/></dcvalue>
+                    </xsl:when>
+                    <xsl:when test="m:datafield[@tag='245']/m:subfield[@code='a']/text()">
+                        <!-- @code='b' vypada jako anglickej preklad ale v sample je jen malo -->
+                        <dcvalue element="title"><xsl:value-of select="m:datafield[@tag='245']/m:subfield[@code='a']"/></dcvalue>
+                    </xsl:when>
+            </xsl:choose>
     </xsl:template>
 
     <xsl:template match="m:controlfield[@tag='001']">
