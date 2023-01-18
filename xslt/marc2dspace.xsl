@@ -7,9 +7,8 @@
     <xsl:param name="static_provider_name" static="yes"/>
     <xsl:param name="record_identifier"/>
 
-    <!-- import may be overridden
+    <!-- import may be overridden -->
     <xsl:import href="marc2dspace_main.xsl"/>
- -->
 
     <!-- overrides -->
     <!-- per provider includes if any -->
