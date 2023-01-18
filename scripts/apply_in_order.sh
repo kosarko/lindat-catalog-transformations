@@ -130,8 +130,7 @@ if [[ "$1" =~ ^extract(\.xsl)?$ ]]; then
         popd >/dev/null
         shift
         SRC_DIR="$OUTDIR"/split
-fi
-if [[ "$1" =~ ^extract_raw_single(\.xsl)?$ ]]; then
+elif [[ "$1" =~ ^extract_raw_single(\.xsl)?$ ]]; then
         mkdir -p "$OUTDIR"/split
         pushd "$OUTDIR"/split >/dev/null
         find $SRC_DIR -type f -print0 | xargs -n 1 -I filename -P "$CPUS" --null  bash -c 'extract_raw_single filename' _ 
