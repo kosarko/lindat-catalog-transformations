@@ -35,6 +35,23 @@
     <xsl:template match="m:datafield[@tag='BIB']/m:subfield[@code='a']">
     </xsl:template>
 
+    <!-- override the _main template for language; do nothing here -->
+    <xsl:template match="m:datafield[@tag='041']/m:subfield[@code='a']">
+    </xsl:template>
+
+    <!-- override the _main template for title; prefer NZV -->
+    <xsl:template name="title">
+            <xsl:choose>
+                    <xsl:when test="m:datafield[@tag='NZV']/m:subfield[@code='t']/text()">
+                        <dcvalue element="title"><xsl:value-of select="m:datafield[@tag='NZV']/m:subfield[@code='t']"/></dcvalue>
+                    </xsl:when>
+                    <xsl:when test="m:datafield[@tag='245']/m:subfield[@code='a']/text()">
+                        <!-- @code='b' vypada jako anglickej preklad ale v sample je jen malo -->
+                        <dcvalue element="title"><xsl:value-of select="m:datafield[@tag='245']/m:subfield[@code='a']"/></dcvalue>
+                    </xsl:when>
+            </xsl:choose>
+    </xsl:template>
+
 
     <xsl:template match="m:controlfield[@tag='001']">
             <dcvalue element="identifier"><xsl:value-of select="concat('olympos_cz:', text())"/></dcvalue>
