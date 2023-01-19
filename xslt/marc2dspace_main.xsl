@@ -4,9 +4,6 @@
 >
     <xsl:output method="xml" version="1.0" encoding="UTF-8" indent="yes"/>
 
-    <xsl:param name="provider_uri" required="true" />
-
-
     <xsl:include href="common/common.xslt"/>
 
     <xsl:template match="text()"/>

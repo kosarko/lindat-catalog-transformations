@@ -15,6 +15,6 @@
     <xsl:include href="pamatky_olympos.xsl"
                  use-when="($static_provider_name='Pamatky' or $static_provider_name='Dramata') and doc-available('pamatky_olympos.xsl')"/>
     <xsl:include href="huav.xsl"
-                 use-when="$static_provider_name='HUAV' and doc-available('huav.xsl')"/>
+                 use-when="($static_provider_name='HUAV' or $static_provider_name='Bibliography of the History of the Czech Lands') and doc-available('huav.xsl')"/>
 
 </xsl:stylesheet>
