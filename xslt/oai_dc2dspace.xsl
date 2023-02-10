@@ -15,7 +15,7 @@
     <!-- overrides -->
     <!-- per provider includes if any -->
     <xsl:include href="oai_dc2dspace_ajp.xsl" use-when="$static_provider_name='Patocka digital' and doc-available('oai_dc2dspace_ajp.xsl')"/>
-    <xsl:include href="oai_dc2dspace_ffmu.xsl" use-when="($static_provider_name='Digitální knihovna Arne Nováka' or $static_provider_name='Projectiles') and doc-available('oai_dc2dspace_ffmu.xsl')"/>
+    <xsl:include href="oai_dc2dspace_ffmu.xsl" use-when="($static_provider_name='Digitální knihovna Arne Nováka' or $static_provider_name='Projectiles' or $static_provider_name='Cinematic Brno') and doc-available('oai_dc2dspace_ffmu.xsl')"/>
     <xsl:include href="oai_dc2dspace_hyperfontes.xsl" use-when="$static_provider_name='HyperFontes' and doc-available('oai_dc2dspace_hyperfontes.xsl')"/>
     <xsl:include href="oai_dc2dspace_fontes.xsl" use-when="$static_provider_name='Fontes' and doc-available('oai_dc2dspace_fontes.xsl')"/>
 
