@@ -105,4 +105,7 @@
                     </xsl:when>
             </xsl:choose>
     </xsl:template>
+
+    <!-- too be overriden -->
+    <xsl:template name="metadataOnly"/>
 </xsl:stylesheet>
